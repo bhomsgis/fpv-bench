@@ -1,0 +1,16 @@
+{
+  "accu":             {"clock": "clk", "reset": "rst_n", "reset_active": "low"},
+  "adder_pipe_64bit": {"clock": "clk", "reset": "rst_n", "reset_active": "low",
+                       "reference_module": "verified_adder_64bit"},
+  "counter_12":       {"clock": "clk", "reset": "rst_n", "reset_active": "low"},
+  "div_16bit":        {"combinational": true,
+                       "ports": "input [15:0] A, input [7:0] B, output [15:0] result, output [15:0] odd",
+                       "sby_mode": "bmc", "vcf_max_time": 900},
+  "edge_detect":      {"clock": "clk", "reset": "rst_n", "reset_active": "low"},
+  "fsm":              {"clock": "CLK", "reset": "RST", "reset_active": "high", "sby_mode": "bmc"},
+  "multi_16bit":      {"clock": "clk", "reset": "rst_n", "reset_active": "low"},
+  "RAM":              {"clock": "clk", "reset": "rst_n", "reset_active": "low"},
+  "signal_generator": {"clock": "clk", "reset": "rst_n", "reset_active": "low"},
+  "traffic_light":    {"clock": "clk", "reset": "rst_n", "reset_active": "low"},
+  "width_8to16":      {"clock": "clk", "reset": "rst_n", "reset_active": "low"}
+}
