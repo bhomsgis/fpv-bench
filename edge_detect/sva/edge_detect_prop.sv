@@ -20,22 +20,16 @@ always @(posedge clk or negedge rst_n) begin
     end
 end
 
-always @(posedge clk) begin
-    if (rst_n) begin
-        a_spec_rise_on_01:         assert (!(a_d && !a_dd) || rise);
-        a_spec_down_on_10:         assert (!(!a_d && a_dd) || down);
-        a_spec_no_rise_without_01: assert (!rise || (a_d && !a_dd));
-        a_spec_no_down_without_10: assert (!down || (!a_d && a_dd));
-        a_spec_mutex:              assert (!(rise && down));
-    end
-end
+default clocking cb @(posedge clk); endclocking
+default disable iff (!rst_n);
 
-always @* begin
-    if (!rst_n) begin
-        a_ref_rst_rise: assert (!rise);
-        a_ref_rst_down: assert (!down);
-    end
-end
+a_spec_rise_on_01:         assert property (!(a_d && !a_dd) || rise);
+a_spec_down_on_10:         assert property (!(!a_d && a_dd) || down);
+a_spec_no_rise_without_01: assert property (!rise || (a_d && !a_dd));
+a_spec_no_down_without_10: assert property (!down || (!a_d && a_dd));
+a_spec_mutex:              assert property (!(rise && down));
+a_ref_rst_rise:            assert property (disable iff (1'b0) !rst_n |-> !rise);
+a_ref_rst_down:            assert property (disable iff (1'b0) !rst_n |-> !down);
 
 `ifdef FPV_COVERS
 c_rise_01:     cover property (@(posedge clk) rst_n && a_d && !a_dd);

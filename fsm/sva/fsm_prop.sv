@@ -17,15 +17,13 @@ end
 
 wire pat_10011 = ({hist, IN} == 5'b10011);
 
-always @* begin
-    if (!RST) begin
-        a_spec_match_on_10011:       assert (!pat_10011 || MATCH);
-        a_spec_no_match_unless_10011: assert (!MATCH || pat_10011);
+default clocking cb @(posedge CLK); endclocking
+default disable iff (RST);
 
-        a_spec_match_implies_in:     assert (!MATCH || IN);
-    end
-    a_spec_reset_clears: assert (!RST || !MATCH);
-end
+a_spec_match_on_10011:        assert property (!pat_10011 || MATCH);
+a_spec_no_match_unless_10011: assert property (!MATCH || pat_10011);
+a_spec_match_implies_in:      assert property (!MATCH || IN);
+a_spec_reset_clears:          assert property (disable iff (1'b0) RST |-> !MATCH);
 
 `ifdef FPV_COVERS
 c_pat_10011: cover property (@(posedge CLK) !RST && pat_10011);

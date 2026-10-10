@@ -7,15 +7,10 @@ module div_16bit_prop (
     input vcf_clk,
     input [15:0] A, input [7:0] B, input [15:0] result, input [15:0] odd
 );
-always @* begin
-    if (B != 8'd0) begin
-        a_spec_reconstruct: assert (A == (result * {8'd0, B} + odd));
-        a_spec_remainder_lt_b: assert (odd < {8'd0, B});
-    end else begin
-        a_ref_div0_result: assert (result == 16'hFFFF);
-        a_ref_div0_odd:    assert (odd == A);
-    end
-end
+a_spec_remainder_lt_b: assert property (@(posedge vcf_clk) B != 8'd0 |-> odd < {8'd0, B});
+a_spec_reconstruct:    assert property (@(posedge vcf_clk) B != 8'd0 |-> A == (result * {8'd0, B} + odd));
+a_ref_div0_result:     assert property (@(posedge vcf_clk) B == 8'd0 |-> result == 16'hFFFF);
+a_ref_div0_odd:        assert property (@(posedge vcf_clk) B == 8'd0 |-> odd == A);
 
 `ifdef FPV_COVERS
 c_div_nz: cover property (@(posedge vcf_clk) B != 8'd0);

@@ -16,7 +16,7 @@ a_spec_hold_when_idle: assert property ((!valid_count) |=> out == $past(out));
 
 a_spec_out_in_range: assert property (out <= 4'd11);
 
-always @(*) if (!rst_n) a_ref_rst_out_zero: assert (out == 4'd0);
+a_ref_rst_out_zero: assert property (disable iff (1'b0) !rst_n |-> out == 4'd0);
 
 a_spec_rst_clears_out: assert property (
     disable iff (1'b0) (!rst_n) |=> (out == 4'd0)

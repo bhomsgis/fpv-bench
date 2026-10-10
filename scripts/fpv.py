@@ -111,8 +111,8 @@ def write_sources(design: str, rtl: Path, src: Path, tool: str, covers: bool) ->
     (src / "bind.svh").write_text((ROOT / design / "sva" / f"{design}_bind.svh").read_text())
     cfg = DESIGNS[design]
     if cfg.get("combinational"):
-        clk_port = "input vcf_clk, " if tool == "vcf" else ""
-        clk_conn = "(.vcf_clk(vcf_clk), .*)" if tool == "vcf" else "(.*)"
+        clk_port = "input vcf_clk, " if tool == "vcf" else "input clk, "
+        clk_conn = "(.vcf_clk(vcf_clk), .*)" if tool == "vcf" else "(.clk(clk), .*)"
         (src / "wrap.sv").write_text(
             f"module {design}_wrap ({clk_port}{cfg['ports']});\n"
             f"{design} dut(.*);\n"
