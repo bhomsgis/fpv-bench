@@ -2,8 +2,8 @@
 """Run the fpv-bench checkers with SymbiYosys (SBY) or Synopsys VC Formal.
 
 Called by ../run_fpv.sh. Each target (the reference design or one LLM sample)
-is one job: DUT + checker + bind. Both tools assert reset in the initial state
-only and leave it free afterwards (VC Formal: sim_force without set_constant).
+is one job: DUT + checker + bind, proven with the same reset handling as the
+paper (SBY: reset asserted in the initial state; VC Formal: create_reset).
 """
 from __future__ import annotations
 
@@ -77,7 +77,7 @@ def sby_assume(design: str) -> str:
     val = "1'b0" if cfg["reset_active"] == "low" else "1'b1"
     return (
         f"module fpv_reset_assume (input {cfg['clock']}, input {cfg['reset']});\n"
-        f"    always @(*) if ($initstate) assume ({cfg['reset']} == {val});\n"
+        f"    initial assume ({cfg['reset']} == {val});\n"
         f"endmodule\n"
         f"bind {design} fpv_reset_assume u_fpv_reset(.*);\n"
     )
@@ -234,8 +234,7 @@ def vcf_tcl(design: str, src: Path, work: Path, args) -> str:
     files = ["dut.v", "prop.sv", "wrap.sv" if comb else "bind.svh"]
     analyze = "".join(f"analyze -format sverilog {{{src / f}}}\n" for f in files)
     clock = "vcf_clk" if comb else cfg["clock"]
-    val = "1'b0" if cfg.get("reset_active") == "low" else "1'b1"
-    reset = "" if comb else f"sim_force {cfg['reset']} -apply {val}\n"
+    reset = "" if comb else f"create_reset {cfg['reset']} -sense {cfg['reset_active']}\n"
     max_time = args.vcf_max_time or cfg.get("vcf_max_time", VCF_MAX_TIME)
     tcl = (
         f"set_fml_appmode FPV\n"

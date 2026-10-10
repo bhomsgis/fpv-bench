@@ -31,9 +31,8 @@ a_ref_same_cycle_read_old: assert property (
 
 a_ref_hi_addr_survives_reset: assert property (
     disable iff (1'b0)
-    $initstate
-    ##[1:8] (rst_n && write_en && write_addr >= 8'd8 && write_addr <= 8'd11 &&
-             write_data != 6'd0)
+    (rst_n && write_en && write_addr >= 8'd8 && write_addr <= 8'd11 &&
+     write_data != 6'd0)
     ##1 (rst_n && !write_en)
     ##1 !rst_n
     ##1 (rst_n && read_en && read_addr == $past(write_addr, 3) &&
@@ -43,8 +42,7 @@ a_ref_hi_addr_survives_reset: assert property (
 
 a_spec_reset_clears_depth: assert property (
     disable iff (1'b0)
-    $initstate
-    ##[1:8] (rst_n && write_en && write_addr <= 8'd7 && write_data != 6'd0)
+    (rst_n && write_en && write_addr <= 8'd7 && write_data != 6'd0)
     ##1 (rst_n && !write_en)
     ##1 !rst_n
     ##1 (rst_n && read_en && read_addr == $past(write_addr, 3) &&
@@ -66,16 +64,14 @@ c_same_cycle_rw:   cover property (
 );
 c_hi_after_reset:  cover property (
     disable iff (1'b0)
-    $initstate
-    ##[1:8] (rst_n && write_en && write_addr >= 8'd8 && write_addr <= 8'd11)
+    (rst_n && write_en && write_addr >= 8'd8 && write_addr <= 8'd11)
     ##1 (rst_n && !write_en)
     ##1 !rst_n
     ##1 (rst_n && read_en && read_addr == $past(write_addr, 3))
 );
 c_spec_depth_after_reset: cover property (
     disable iff (1'b0)
-    $initstate
-    ##[1:8] (rst_n && write_en && write_addr <= 8'd7)
+    (rst_n && write_en && write_addr <= 8'd7)
     ##1 (rst_n && !write_en)
     ##1 !rst_n
     ##1 (rst_n && read_en && read_addr == $past(write_addr, 3))

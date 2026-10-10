@@ -107,7 +107,7 @@ afterwards, so assertions about behaviour while reset is held are checked.
   (no `set_constant`), vacuity and witness checks enabled, and a per-property
   time budget. Every property is checked independently.
 - **SBY**: `smtbmc yices`, depth 25, prove mode (BMC for `fsm` and
-  `div_16bit`), reset assumed at `$initstate`. SBY stops at the first
+  `div_16bit`). Reset is an `initial assume` of the reset pin in the first cycle only. SBY stops at the first
   counterexample, so a failing target is re-run in BMC mode with
   `smtbmc --keep-going` to report every failing assertion.
 - The sample's module is renamed to the design name when needed (the adder
